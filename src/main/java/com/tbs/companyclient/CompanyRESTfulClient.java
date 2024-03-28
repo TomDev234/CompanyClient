@@ -33,8 +33,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.entity(department, MediaType.APPLICATION_JSON));
     // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to create new department. Status code: " + response.getStatus());
-    else System.out.println("New department created");
+    if (response.getStatus() != ErrorCodes.CREATED) System.err.println("Failed to create new department. Status code: " + response.getStatus());
   }
  
   // read all departments
@@ -59,8 +58,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .put(Entity.entity(departments, MediaType.APPLICATION_JSON));
     // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to update departments. Status code: " + response.getStatus());
-    else System.out.println("Departments updated");
+    if (response.getStatus() != ErrorCodes.OK) System.err.println("Failed to update departments. Status code: " + response.getStatus());
   }
   
   // delete all departments
@@ -72,7 +70,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .delete();
     int statusCode = response.getStatus();
-    if (statusCode != 200) System.out.println("Failed to delete department. Status code: " + statusCode);
+    if (statusCode != ErrorCodes.NO_CONTENT) System.out.println("Failed to delete department. Status code: " + statusCode);
   }
   
   // return department with ID
@@ -96,8 +94,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .put(Entity.entity(department, MediaType.APPLICATION_JSON));
     // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to update departments. Status code: " + response.getStatus());
-    else System.out.println("Departments updated");
+    if (response.getStatus() != ErrorCodes.OK) System.err.println("Failed to update departments. Status code: " + response.getStatus());
   }
   
   // ID delete department with ID
@@ -109,7 +106,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .delete();
     int statusCode = response.getStatus();
-    if (statusCode != 200) System.out.println("Failed to delete department. Status code: " + statusCode);
+    if (statusCode != ErrorCodes.NO_CONTENT) System.out.println("Failed to delete department. Status code: " + statusCode);
   }
   
   // create an employee
@@ -121,10 +118,8 @@ public class CompanyRESTfulClient {
             .path("employees")
             .request(MediaType.APPLICATION_JSON)
             .post(Entity.entity(employee, MediaType.APPLICATION_JSON));
-
     // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to create new employee. Status code: " + response.getStatus());
-    else System.out.println("New employee created");
+    if (response.getStatus() != ErrorCodes.CREATED) System.err.println("Failed to create new employee. Status code: " + response.getStatus());
   }
 
   // return all employees
@@ -149,8 +144,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .put(Entity.entity(employees, MediaType.APPLICATION_JSON));
     // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to update employees. Status code: " + response.getStatus());
-    else System.out.println("Employees updated");
+    if (response.getStatus() != ErrorCodes.OK) System.err.println("Failed to update employees. Status code: " + response.getStatus());
   }
 
   // delete all employees
@@ -162,7 +156,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .delete();
     int statusCode = response.getStatus();
-    if (statusCode != 200) System.out.println("Failed to delete employees. Status code: " + statusCode);
+    if (statusCode != ErrorCodes.NO_CONTENT) System.out.println("Failed to delete employees. Status code: " + statusCode);
   }
 
   // return employee with ID
@@ -178,16 +172,13 @@ public class CompanyRESTfulClient {
 
   // update employee with ID
   
-  public static void updateEmployee(Employee employee) {
-    // Invoke PUT request to update employee
+  public static int updateEmployee(Employee employee) {
     Response response = client
             .target(BASE_URI)
             .path("employees/" + employee.id)
             .request(MediaType.APPLICATION_JSON)
             .put(Entity.entity(employee, MediaType.APPLICATION_JSON));
-    // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to update employee. Status code: " + response.getStatus());
-    else System.out.println("Employee updated");
+    return response.getStatus();
   }
   
   // delete employee with ID
@@ -199,7 +190,7 @@ public class CompanyRESTfulClient {
             .request(MediaType.APPLICATION_JSON)
             .delete();
     int statusCode = response.getStatus();
-    if (statusCode != 200) System.out.println("Failed to delete employees. Status code: " + statusCode);
+    if (statusCode != ErrorCodes.NO_CONTENT) System.out.println("Failed to delete employees. Status code: " + statusCode);
   }
 
   // return employees from department with ID
@@ -214,21 +205,18 @@ public class CompanyRESTfulClient {
     return employees;
   }
 
-  // update employees from department with ID
-  
-  public static void updateEmployees(List<Employee> employees, int departmentId) {
-    // Invoke PUT request to update employees
+  // delete employees from department with ID
+
+  public static void deleteAllEmployeesFromDepartment(int departmentId) {
+    // Invoke DELETE request to delete employees
     Response response = client
             .target(BASE_URI)
-            .path("departments/" + departmentId)
+            .path("departments/" + departmentId + "/employees")
             .request(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(employees, MediaType.APPLICATION_JSON));
-    // Check if request was successful
-    if (response.getStatus() != Response.Status.CREATED.getStatusCode()) System.err.println("Failed to update employees. Status code: " + response.getStatus());
-    else System.out.println("Employees updated");
+            .delete();
+    int statusCode = response.getStatus();
+    if (statusCode != ErrorCodes.NO_CONTENT) System.out.println("Failed to delete employees. Status code: " + statusCode);
   }
-
-  // delete employees from department with ID
   
   private static List<Department> convertJsonToDepartmentList(String jsonString) {
     Type departmentListType = new TypeToken<List<Department>>() {}.getType();

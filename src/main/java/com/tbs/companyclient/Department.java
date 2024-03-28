@@ -1,8 +1,9 @@
+package com.tbs.companyclient;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.tbs.companyclient;
 
 /**
  *
@@ -14,6 +15,12 @@ public class Department {
   String location;
   
   public Department() {} // Required default constructor for JAXB
+  
+  public Department(String name, String location) {
+    this.id = 0;
+    this.name = name;
+    this.location = location;
+  }
   
   public Department(int id, String name, String location) {
     this.id = id;
